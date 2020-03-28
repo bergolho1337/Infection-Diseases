@@ -1,0 +1,15 @@
+,date,location,new_cases,new_deaths,total_cases,total_deaths
+2747,2020-03-15,Guatemala,1,0,1,0
+2748,2020-03-16,Guatemala,0,1,1,1
+2749,2020-03-17,Guatemala,5,0,6,1
+2750,2020-03-18,Guatemala,0,0,6,1
+2751,2020-03-19,Guatemala,2,0,8,1
+2752,2020-03-20,Guatemala,1,0,9,1
+2753,2020-03-21,Guatemala,4,0,13,1
+2754,2020-03-22,Guatemala,4,0,17,1
+2755,2020-03-23,Guatemala,2,0,19,1
+2756,2020-03-24,Guatemala,1,0,20,1
+2757,2020-03-25,Guatemala,1,0,21,1
+2758,2020-03-26,Guatemala,3,0,24,1
+2759,2020-03-27,Guatemala,1,0,25,1
+2760,2020-03-28,Guatemala,7,0,32,1

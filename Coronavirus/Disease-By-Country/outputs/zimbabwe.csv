@@ -1,0 +1,9 @@
+,date,location,new_cases,new_deaths,total_cases,total_deaths
+7401,2020-03-21,Zimbabwe,1,0,1,0
+7402,2020-03-22,Zimbabwe,1,0,2,0
+7403,2020-03-23,Zimbabwe,0,0,2,0
+7404,2020-03-24,Zimbabwe,0,1,2,1
+7405,2020-03-25,Zimbabwe,0,0,2,1
+7406,2020-03-26,Zimbabwe,1,0,3,1
+7407,2020-03-27,Zimbabwe,0,0,3,1
+7408,2020-03-28,Zimbabwe,2,0,5,1

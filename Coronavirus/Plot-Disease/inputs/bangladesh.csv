@@ -1,0 +1,15 @@
+,date,location,new_cases,new_deaths,total_cases,total_deaths
+684,2020-03-09,Bangladesh,3,0,3,0
+685,2020-03-15,Bangladesh,0,0,3,0
+686,2020-03-17,Bangladesh,2,0,5,0
+687,2020-03-18,Bangladesh,3,0,8,0
+688,2020-03-19,Bangladesh,2,0,10,0
+689,2020-03-20,Bangladesh,0,0,10,0
+690,2020-03-21,Bangladesh,7,0,17,0
+691,2020-03-22,Bangladesh,7,2,24,2
+692,2020-03-23,Bangladesh,3,1,27,3
+693,2020-03-24,Bangladesh,6,0,33,3
+694,2020-03-25,Bangladesh,6,1,39,4
+695,2020-03-26,Bangladesh,0,1,39,5
+696,2020-03-27,Bangladesh,9,0,48,5
+697,2020-03-28,Bangladesh,0,0,48,5

@@ -18,8 +18,10 @@
 class Solver
 {
 public:
-    std::vector<char> the_dna;
-    std::vector<char> the_rna_m;
+    std::string the_dna;
+    std::string the_rna_m;
+
+    std::vector< std::pair<uint32_t,uint32_t> > codons_limits; 
 
     std::map<std::string,std::string> codons_table;
 public:

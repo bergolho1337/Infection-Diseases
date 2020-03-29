@@ -2,6 +2,9 @@
 
 Solver::Solver (const char filename[])
 {
+    this->the_dna = "";
+    this->the_rna_m = "";
+
     // Read the DNA sequence
     read_dna_sequence_from_file(filename);
 
@@ -13,6 +16,21 @@ Solver::Solver (const char filename[])
     
 }
 
+/*
+Input file format:
+*************************************
+<num_bases_dna>
+<dna> 
+.
+.
+.
+<num_proteins>
+<start_codon> <end_codon>
+.
+.
+.
+*************************************
+*/
 void Solver::read_dna_sequence_from_file (const char filename[])
 {
     FILE *file = fopen(filename,"r");
@@ -22,10 +40,28 @@ void Solver::read_dna_sequence_from_file (const char filename[])
         exit(EXIT_FAILURE);
     }
 
+    // Read the DNA sequence
     char letter;
-    while (fscanf(file,"%c",&letter) != EOF)
+    uint32_t num_bases;
+    fscanf(file,"%u",&num_bases);
+    for (uint32_t i = 0; i < num_bases; i++)
     {
-        this->the_dna.push_back(letter);
+        fscanf(file,"%c",&letter);
+        if (letter != '\n')
+            this->the_dna += letter;
+    }
+    fscanf(file,"%c",&letter);
+
+    // Read the codons limit from each protein that the virus can transcribe 
+    uint32_t num_proteins;
+    uint32_t limits[2];
+    fscanf(file,"%u",&num_proteins);
+    printf("%u\n",num_proteins);
+    for (uint32_t i = 0; i < num_proteins; i++)
+    {
+        fscanf(file,"%u %u",&limits[0],&limits[1]);
+
+        this->codons_limits.push_back(std::make_pair(limits[0],limits[1]));
     }
 
     fclose(file);
@@ -37,115 +73,42 @@ void Solver::transcribe_dna_to_rna_m ()
     {
         char base = convert_nitrogenous_base(this->the_dna[i]);
 
-        this->the_rna_m.push_back(base);
+        this->the_rna_m += base;
     }
 }
 
 void Solver::translate_proteins ()
 { 
-    // Flag to start the aminoacids sequence
-    bool is_generating = false;
- 
-    // Let the RNAt pass through the RNAm
-    std::string code_sequence;
-    uint32_t counter = 0;
-    uint32_t dna_size = this->the_dna.size();
+    uint32_t num_proteins = this->codons_limits.size();
 
-    uint32_t i = 0;
-    while (i < dna_size)
+    for (uint32_t i = 0; i < num_proteins; i++)
     {
-        // TODO: Improve this .... kkkkk
-        char base[4];
-        base[0] = this->the_dna[i];
-        base[1] = this->the_dna[i+1];
-        base[2] = this->the_dna[i+2];
-        base[3] = '\0';
+        uint32_t start = this->codons_limits[i].first-1;
+        uint32_t end = this->codons_limits[i].second-1;
 
-        std::string key(base);
-        std::string value = this->codons_table[key];
+        std::string code_sequence;
 
-        // Find the initialization codon
-        if (!is_generating)
+        for (uint32_t j = start; j < end; j += 3)
         {
-            // If the codon is Methionine then start encoding ...
-            if (value == "M")
-            {
-                is_generating = true;
-                code_sequence = "M";
+            // TODO: Improve this .... kkkkk
+            char base[4];
+            base[0] = this->the_dna[j];
+            base[1] = this->the_dna[j+1];
+            base[2] = this->the_dna[j+2];
+            base[3] = '\0';
 
-                i += 3;
+            std::string key(base);
+            std::string value = this->codons_table[key];
 
-                //std::cout << "Start = " << i << std::endl;
-            }
-            else
-            {
-                // We pass through one nitrogen base at the time
-                i++;
-            }
-            
-        }
-        // Reading codons ...
-        else
-        {
-            // If the codon is a termination one then stop encoding
             if (value == "#")
-            {
-                is_generating = false;
-                counter++;
-
-                //std::cout << "End = " << i << std::endl;
-
-                std::cout << "Protein " << counter << " = " << code_sequence << std::endl;
-            }
-
-            code_sequence += value;
-
-            i += 3;
-        }
-
-        // DEBUG
-        //std::cout << i << ": " << base << " --> " << value << std::endl;
-    }
-
-
-/*
-    std::cout << "================================ DNA ===========================================" << std::endl;
-    for (uint32_t i = 0; i < this->the_dna.size(); i += 3)
-    {
-
-        // TODO: Improve this .... kkkkk
-        char base[4];
-        base[0] = this->the_dna[i];
-        base[1] = this->the_dna[i+1];
-        base[2] = this->the_dna[i+2];
-        base[3] = '\0';
-
-        std::string key(base);
-        std::string value = this->codons_table[key];
-
-        // If the codon is Methionine then start encoding ...
-        if (value == "M")
-        {
-            is_generating = true;
-            code_sequence = "";
-        }
-        // If the codon is a termination one then stop encoding
-        else if (value == "#")
-        {
-            is_generating = false;
-            counter++;
-
-            //std::cout << "Protein " << counter << " = " << code_sequence << std::endl;
-        }
+                break;
             
-        if (is_generating)
             code_sequence += value;
-        
-        // DEBUG
-        std::cout << i << ": " << base << " --> " << value << std::endl;
+
+        }
+
+        std::cout << code_sequence << std::endl;
     }
-    std::cout << "================================ DNA ===========================================" << std::endl;
-*/
 }
 
 void Solver::build_codons_table ()
@@ -363,17 +326,17 @@ this->codons_table["uag"] = "#";
 void Solver::print ()
 {
     std::cout << "================== DNA ==============================" << std::endl;
-    for (uint32_t i = 0; i < this->the_dna.size(); i++)
-        std::cout << this->the_dna[i];
-    std::cout << std::endl;
+    std::cout << this->the_dna << std::endl;
     std::cout << "================== DNA ==============================" << std::endl;
 
     std::cout << "================== RNAm ==============================" << std::endl;
-    for (uint32_t i = 0; i < this->the_rna_m.size(); i++)
-        std::cout << this->the_rna_m[i];
-    std::cout << std::endl;
+    std::cout << this->the_rna_m << std::endl;
     std::cout << "================== RNAm ==============================" << std::endl;
 
+    for (uint32_t i = 0; i < this->codons_limits.size(); i++)
+    {
+        std::cout << "Start = " << this->codons_limits[i].first << " || End = " << this->codons_limits[i].second << std::endl;
+    }
 }
 
 char convert_nitrogenous_base (const char base)
